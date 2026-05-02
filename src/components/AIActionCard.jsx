@@ -1,0 +1,1 @@
+export default function AIActionCard({ title, description, badge, onPress }) { return <button className="ai-card" onClick={onPress}><h4>{title}</h4><p>{description}</p>{badge && <span className="chip">{badge}</span>}</button>; }

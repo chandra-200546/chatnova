@@ -1,0 +1,1 @@
+export default function PrivacyScreen() { const rows = ['Last seen','Profile photo','About','Status','Read receipts','Blocked contacts','App lock']; return <main className="screen-page"><h2>Privacy</h2>{rows.map((r)=><button className="settings-item" key={r}><span>{r}</span><span>Everyone</span></button>)}</main>; }
