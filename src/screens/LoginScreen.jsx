@@ -20,7 +20,12 @@ export default function LoginScreen() {
       sessionStorage.setItem('tmp_phone', normalized);
       nav('/otp');
     } catch (e) {
-      setError(e.message || 'Failed to send OTP');
+      const msg = (e && e.message) || 'Failed to send OTP';
+      if (msg.toLowerCase().includes('failed to fetch')) {
+        setError('Network error: check VITE_SUPABASE_URL, internet, and Supabase Auth phone settings.');
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
