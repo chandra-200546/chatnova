@@ -171,8 +171,11 @@ export function AppProvider({ children }) {
         if (!mounted) return;
         setSession(data.session);
         setUser(data.session?.user || null);
+        setLoading(false);
         if (data.session?.user?.id) {
-          await refreshAll(data.session.user.id);
+          refreshAll(data.session.user.id).catch((e) => {
+            if (mounted) setBootError(e?.message || 'Background sync failed');
+          });
         }
       } catch (e) {
         setBootError(e?.message || 'Startup failed');
@@ -190,8 +193,11 @@ export function AppProvider({ children }) {
       try {
         setSession(nextSession);
         setUser(nextSession?.user || null);
+        setLoading(false);
         if (nextSession?.user?.id) {
-          await refreshAll(nextSession.user.id);
+          refreshAll(nextSession.user.id).catch((e) => {
+            if (mounted) setBootError(e?.message || 'Background sync failed');
+          });
         } else {
           setProfile(null);
           setSettings(null);
