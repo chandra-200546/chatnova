@@ -12,5 +12,5 @@ export default function SplashScreen() {
     }, 1200);
     return () => clearTimeout(t);
   }, [isAuthenticated, hasProfile, nav]);
-  return <div className="center-screen"><h1>ChatNova</h1><p>Secure. Smart. Connected.</p><small>Loading...</small></div>;
+  return <div className="center-screen"><img src="/chatnova-logo.png" alt="ChatNova logo" className="splash-logo" /><h1>ChatNova</h1><p>Secure. Smart. Connected.</p><small>Loading...</small></div>;
 }
