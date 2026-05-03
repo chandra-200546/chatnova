@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { formatTime } from '../utils/formatTime';
+import { storageService } from '../services/storageService';
 
 const AppContext = createContext(null);
 
@@ -234,14 +235,34 @@ export function AppProvider({ children }) {
     if (error) throw error;
   };
 
-  const completeProfile = async ({ name, bio, phone }) => {
+  const completeProfile = async ({ name, bio, phone, avatarUrl }) => {
     if (!user?.id) return;
     const { error } = await supabase
       .from('profiles')
-      .update({ display_name: name, bio: bio || '', phone })
+      .update({ display_name: name, bio: bio || '', phone, ...(avatarUrl ? { avatar_url: avatarUrl } : {}) })
       .eq('id', user.id);
     if (error) throw error;
     await loadProfile(user.id);
+  };
+
+  const updateProfile = async (patch) => {
+    if (!user?.id) return;
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(patch)
+      .eq('id', user.id)
+      .select('*')
+      .single();
+    if (error) throw error;
+    setProfile(data);
+    return data;
+  };
+
+  const uploadAvatar = async (file) => {
+    if (!user?.id) return null;
+    const url = await storageService.uploadAvatar(file, user.id);
+    await updateProfile({ avatar_url: url });
+    return url;
   };
 
   const logout = async () => {
@@ -369,6 +390,8 @@ export function AppProvider({ children }) {
     requestOtp,
     verifyOtp,
     completeProfile,
+    updateProfile,
+    uploadAvatar,
     logout,
     fetchMessages,
     sendMessage,

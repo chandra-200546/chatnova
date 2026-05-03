@@ -42,8 +42,9 @@ button { background: var(--primary); color: #042a1a; border: 0; border-radius: 1
 .grow p { margin: 4px 0; color: var(--muted); }
 .meta { text-align: right; display: grid; justify-items: end; gap: 6px; }
 .badge { background: var(--primary); color: #052617; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
-.avatar { position: relative; width: 44px; height: 44px; display: grid; place-items: center; background: #2a3942; border-radius: 999px; font-weight: 700; }
+.avatar { position: relative; width: 44px; height: 44px; display: grid; place-items: center; background: #2a3942; border-radius: 999px; font-weight: 700; overflow: hidden; }
 .avatar.xl { width: 78px; height: 78px; font-size: 24px; }
+.avatar-img { width: 100%; height: 100%; object-fit: cover; }
 .online { position: absolute; right: 0; bottom: 0; width: 10px; height: 10px; background: var(--secondary); border: 2px solid var(--card); border-radius: 999px; }
 .chat-head { display: flex; align-items: center; gap: 10px; background: var(--surface); padding: 10px; border: 1px solid var(--border); border-radius: 10px; }
 .chat-head small { color: var(--muted); }
@@ -77,3 +78,7 @@ button { background: var(--primary); color: #042a1a; border: 0; border-radius: 1
 .settings-item { justify-content: space-between; }
 .note { color: var(--accent); }
 .swatch { width: 28px; height: 28px; border-radius: 999px; }
+.avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 8px; max-height: 360px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; padding: 8px; background: #0f1e25; }
+.avatar-pick { background: transparent; border: 2px solid transparent; padding: 2px; border-radius: 10px; }
+.avatar-pick.selected { border-color: var(--primary); }
+.avatar-pick img { width: 100%; height: 52px; object-fit: cover; border-radius: 8px; }

@@ -26,7 +26,7 @@ export default function SettingsScreen() {
   return (
     <main className="screen-page">
       <h2>Settings</h2>
-      <div className="list-card"><Avatar name={profile?.display_name || 'Me'} /><div><h4>{profile?.display_name || 'User'}</h4><p>{profile?.phone || ''}</p></div></div>
+      <button className="list-card" onClick={() => nav('/user-profile')}><Avatar name={profile?.display_name || 'Me'} imageUrl={profile?.avatar_url} /><div><h4>{profile?.display_name || 'User'}</h4><p>{profile?.phone || ''}</p></div></button>
       <SettingsItem label="Account" right=">" onClick={() => nav('/account')} />
       <SettingsItem label="Privacy" right=">" onClick={() => nav('/privacy')} />
       <SettingsItem label="Notifications" right=">" onClick={() => nav('/notifications')} />
