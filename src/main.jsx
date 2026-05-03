@@ -7,8 +7,9 @@ import AppNavigator from './navigation/AppNavigator';
 import './styles.css';
 
 function Root() {
-  const { loading, isAuthenticated, hasProfile } = useApp();
-  if (loading) return <div className="center-screen"><h2>Loading ChatNova...</h2></div>;
+  const { loading, bootError, isAuthenticated, hasProfile } = useApp();
+  if (loading) return <div className="center-screen"><h2>Loading ChatNova...</h2><small>Please wait...</small></div>;
+  if (bootError) return <div className="center-screen"><h2>Startup issue</h2><small>{bootError}</small><button onClick={() => window.location.reload()}>Retry</button></div>;
   if (!isAuthenticated) return <AuthNavigator />;
   if (!hasProfile) return <AuthNavigator />;
   return <AppNavigator />;

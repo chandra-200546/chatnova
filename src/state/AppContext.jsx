@@ -16,6 +16,7 @@ export function AppProvider({ children }) {
   const [calls, setCalls] = useState([]);
   const [messagesByChat, setMessagesByChat] = useState({});
   const [loading, setLoading] = useState(true);
+  const [bootError, setBootError] = useState('');
 
   const defaultSettings = {
     smart_replies: true,
@@ -153,7 +154,7 @@ export function AppProvider({ children }) {
   };
 
   const refreshAll = async (userId) => {
-    await Promise.all([
+    await Promise.allSettled([
       loadProfile(userId),
       loadContacts(userId),
       hydrateChats(userId),
@@ -164,36 +165,53 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     let mounted = true;
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setUser(data.session?.user || null);
-      if (data.session?.user?.id) {
-        await refreshAll(data.session.user.id);
+    const safeBoot = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!mounted) return;
+        setSession(data.session);
+        setUser(data.session?.user || null);
+        if (data.session?.user?.id) {
+          await refreshAll(data.session.user.id);
+        }
+      } catch (e) {
+        setBootError(e?.message || 'Startup failed');
+      } finally {
+        if (mounted) setLoading(false);
       }
-      setLoading(false);
-    });
+    };
+    safeBoot();
+
+    const bootTimeout = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 8000);
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
-      setSession(nextSession);
-      setUser(nextSession?.user || null);
-      if (nextSession?.user?.id) {
-        await refreshAll(nextSession.user.id);
-      } else {
-        setProfile(null);
-        setSettings(null);
-        setChatList([]);
-        setGroups([]);
-        setContacts([]);
-        setStatuses([]);
-        setCalls([]);
-        setMessagesByChat({});
+      try {
+        setSession(nextSession);
+        setUser(nextSession?.user || null);
+        if (nextSession?.user?.id) {
+          await refreshAll(nextSession.user.id);
+        } else {
+          setProfile(null);
+          setSettings(null);
+          setChatList([]);
+          setGroups([]);
+          setContacts([]);
+          setStatuses([]);
+          setCalls([]);
+          setMessagesByChat({});
+        }
+      } catch (e) {
+        setBootError(e?.message || 'Session update failed');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
       mounted = false;
+      clearTimeout(bootTimeout);
       sub.subscription.unsubscribe();
     };
   }, []);
@@ -329,6 +347,7 @@ export function AppProvider({ children }) {
 
   const value = useMemo(() => ({
     loading,
+    bootError,
     session,
     user,
     profile,
