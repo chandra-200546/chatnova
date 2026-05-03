@@ -12,7 +12,13 @@ import UserProfileScreen from '../screens/UserProfileScreen';
 import GroupInfoScreen from '../screens/GroupInfoScreen';
 import PrivacyScreen from '../screens/PrivacyScreen';
 import ThemeScreen from '../screens/ThemeScreen';
+import AccountScreen from '../screens/AccountScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
+import StorageDataScreen from '../screens/StorageDataScreen';
+import AIFeaturesSettingsScreen from '../screens/AIFeaturesSettingsScreen';
+import SecurityScreen from '../screens/SecurityScreen';
+import HelpSupportScreen from '../screens/HelpSupportScreen';
 
 export default function AppNavigator() {
-  return <div className="app-shell"><Routes><Route path="/" element={<><HomeScreen /><MainTabs /></>} /><Route path="/groups" element={<><GroupsScreen /><MainTabs /></>} /><Route path="/status" element={<><StatusScreen /><MainTabs /></>} /><Route path="/calls" element={<><CallsScreen /><MainTabs /></>} /><Route path="/ai" element={<><AIAssistantScreen /><MainTabs /></>} /><Route path="/chat/:chatId" element={<ChatScreen />} /><Route path="/settings" element={<SettingsScreen />} /><Route path="/new-chat" element={<NewChatScreen />} /><Route path="/user-profile" element={<UserProfileScreen />} /><Route path="/group-info" element={<GroupInfoScreen />} /><Route path="/privacy" element={<PrivacyScreen />} /><Route path="/theme" element={<ThemeScreen />} /><Route path="*" element={<Navigate to="/" />} /></Routes></div>;
+  return <div className="app-shell"><Routes><Route path="/" element={<><HomeScreen /><MainTabs /></>} /><Route path="/groups" element={<><GroupsScreen /><MainTabs /></>} /><Route path="/status" element={<><StatusScreen /><MainTabs /></>} /><Route path="/calls" element={<><CallsScreen /><MainTabs /></>} /><Route path="/ai" element={<><AIAssistantScreen /><MainTabs /></>} /><Route path="/chat/:chatId" element={<ChatScreen />} /><Route path="/settings" element={<SettingsScreen />} /><Route path="/account" element={<AccountScreen />} /><Route path="/notifications" element={<NotificationsScreen />} /><Route path="/storage-data" element={<StorageDataScreen />} /><Route path="/ai-features" element={<AIFeaturesSettingsScreen />} /><Route path="/security" element={<SecurityScreen />} /><Route path="/help-support" element={<HelpSupportScreen />} /><Route path="/new-chat" element={<NewChatScreen />} /><Route path="/user-profile" element={<UserProfileScreen />} /><Route path="/group-info" element={<GroupInfoScreen />} /><Route path="/privacy" element={<PrivacyScreen />} /><Route path="/theme" element={<ThemeScreen />} /><Route path="*" element={<Navigate to="/" />} /></Routes></div>;
 }

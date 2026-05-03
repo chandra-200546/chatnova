@@ -27,14 +27,14 @@ export default function SettingsScreen() {
     <main className="screen-page">
       <h2>Settings</h2>
       <div className="list-card"><Avatar name={profile?.display_name || 'Me'} /><div><h4>{profile?.display_name || 'User'}</h4><p>{profile?.phone || ''}</p></div></div>
-      <SettingsItem label="Account" right=">" />
+      <SettingsItem label="Account" right=">" onClick={() => nav('/account')} />
       <SettingsItem label="Privacy" right=">" onClick={() => nav('/privacy')} />
-      <SettingsItem label="Notifications" right=">" />
+      <SettingsItem label="Notifications" right=">" onClick={() => nav('/notifications')} />
       <SettingsItem label="Chat Theme" right=">" onClick={() => nav('/theme')} />
-      <SettingsItem label="Storage and Data" right=">" />
-      <SettingsItem label="AI Features" right=">" />
-      <SettingsItem label="Security" right=">" />
-      <SettingsItem label="Help and Support" right=">" />
+      <SettingsItem label="Storage and Data" right=">" onClick={() => nav('/storage-data')} />
+      <SettingsItem label="AI Features" right=">" onClick={() => nav('/ai-features')} />
+      <SettingsItem label="Security" right=">" onClick={() => nav('/security')} />
+      <SettingsItem label="Help and Support" right=">" onClick={() => nav('/help-support')} />
       <div className="announcement">End-to-end encryption: secure architecture enabled.</div>
       {error && <small className="danger">{error}</small>}
       {saving && <small>Saving...</small>}
