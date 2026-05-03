@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../components/Avatar';
 import SettingsItem from '../components/SettingsItem';
@@ -6,10 +7,20 @@ import { useApp } from '../state/AppContext';
 export default function SettingsScreen() {
   const nav = useNavigate();
   const { profile, settings, updateSettings, logout } = useApp();
+  const [saving, setSaving] = useState('');
+  const [error, setError] = useState('');
 
   const toggle = async (key) => {
     if (!settings) return;
-    await updateSettings({ [key]: !settings[key] });
+    setSaving(key);
+    setError('');
+    try {
+      await updateSettings({ [key]: !settings[key] });
+    } catch (e) {
+      setError(e.message || 'Failed to update setting');
+    } finally {
+      setSaving('');
+    }
   };
 
   return (
@@ -25,6 +36,8 @@ export default function SettingsScreen() {
       <SettingsItem label="Security" right=">" />
       <SettingsItem label="Help and Support" right=">" />
       <div className="announcement">End-to-end encryption: secure architecture enabled.</div>
+      {error && <small className="danger">{error}</small>}
+      {saving && <small>Saving...</small>}
       <SettingsItem label="Fingerprint lock" right={settings?.fingerprint_lock ? 'ON' : 'OFF'} onClick={() => toggle('fingerprint_lock')} />
       <SettingsItem label="Private vault chats" right={settings?.private_vault ? 'ON' : 'OFF'} onClick={() => toggle('private_vault')} />
       <SettingsItem label="Disappearing messages" right={settings?.disappearing_messages ? 'ON' : 'OFF'} onClick={() => toggle('disappearing_messages')} />

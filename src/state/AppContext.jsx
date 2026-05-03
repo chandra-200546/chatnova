@@ -17,11 +17,38 @@ export function AppProvider({ children }) {
   const [messagesByChat, setMessagesByChat] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const defaultSettings = {
+    smart_replies: true,
+    auto_translation: true,
+    spam_detection: true,
+    chat_summary: true,
+    fingerprint_lock: false,
+    private_vault: false,
+    disappearing_messages: false,
+    theme_mode: 'dark',
+    accent_color: '#25D366',
+  };
+
+  const ensureSettingsRow = async (userId) => {
+    const { data, error } = await supabase
+      .from('user_settings')
+      .upsert({ user_id: userId }, { onConflict: 'user_id' })
+      .select('*')
+      .single();
+    if (error) throw error;
+    return data;
+  };
+
   const loadProfile = async (userId) => {
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     setProfile(data || null);
     const { data: settingsRow } = await supabase.from('user_settings').select('*').eq('user_id', userId).maybeSingle();
-    setSettings(settingsRow || null);
+    if (settingsRow) {
+      setSettings(settingsRow);
+    } else {
+      const created = await ensureSettingsRow(userId);
+      setSettings({ ...defaultSettings, ...created });
+    }
   };
 
   const loadContacts = async (userId) => {
@@ -240,6 +267,7 @@ export function AppProvider({ children }) {
 
   const updateSettings = async (patch) => {
     if (!user?.id) return;
+    await ensureSettingsRow(user.id);
     const { data, error } = await supabase
       .from('user_settings')
       .update(patch)
@@ -247,7 +275,56 @@ export function AppProvider({ children }) {
       .select('*')
       .single();
     if (error) throw error;
-    setSettings(data);
+    setSettings({ ...defaultSettings, ...data });
+  };
+
+  const createGroup = async (title) => {
+    if (!user?.id) return null;
+    const { data: chat, error: chatErr } = await supabase
+      .from('chats')
+      .insert({ type: 'group', title, created_by: user.id })
+      .select('id')
+      .single();
+    if (chatErr) throw chatErr;
+    const { error: memberErr } = await supabase
+      .from('chat_members')
+      .insert({ chat_id: chat.id, user_id: user.id, role: 'owner' });
+    if (memberErr) throw memberErr;
+    await hydrateChats(user.id);
+    return chat.id;
+  };
+
+  const createStatus = async (content) => {
+    if (!user?.id) return;
+    const { error } = await supabase.from('status_updates').insert({
+      user_id: user.id,
+      type: 'text',
+      content: content || 'New status',
+      mood: profile?.mood_status || 'Good',
+    });
+    if (error) throw error;
+    await loadStatuses();
+  };
+
+  const createCall = async (type = 'audio') => {
+    if (!user?.id) return;
+    const { error } = await supabase.from('calls').insert({
+      caller_id: user.id,
+      call_type: type,
+      direction: 'outgoing',
+    });
+    if (error) throw error;
+    await loadCalls(user.id);
+  };
+
+  const logAiAction = async (action, inputText, outputText) => {
+    if (!user?.id) return;
+    await supabase.from('ai_logs').insert({
+      user_id: user.id,
+      action,
+      input_text: inputText || null,
+      output_text: outputText || null,
+    });
   };
 
   const value = useMemo(() => ({
@@ -272,6 +349,10 @@ export function AppProvider({ children }) {
     sendMessage,
     createDirectChat,
     updateSettings,
+    createGroup,
+    createStatus,
+    createCall,
+    logAiAction,
     refreshAll,
   }), [loading, session, user, profile, settings, contacts, chatList, groups, statuses, calls, messagesByChat]);
 
