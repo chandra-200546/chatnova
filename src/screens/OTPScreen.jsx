@@ -1,14 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { validateOtp } from '../utils/validators';
 import { useApp } from '../state/AppContext';
 
 export default function OTPScreen() {
   const nav = useNavigate();
-  const { verifyOtp } = useApp();
+  const { verifyOtp, isAuthenticated, hasProfile } = useApp();
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && hasProfile) {
+      nav('/');
+    }
+  }, [isAuthenticated, hasProfile, nav]);
 
   const onVerify = async () => {
     if (!validateOtp(otp)) return setError('Enter valid 6-digit OTP');

@@ -1,14 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../state/AppContext';
 
 export default function ProfileSetupScreen() {
   const nav = useNavigate();
-  const { completeProfile } = useApp();
+  const { completeProfile, isAuthenticated, hasProfile } = useApp();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && hasProfile) {
+      nav('/');
+    }
+  }, [isAuthenticated, hasProfile, nav]);
 
   const onSave = async () => {
     if (!name.trim()) return setError('Name is required');
