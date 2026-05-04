@@ -252,7 +252,7 @@ create policy "chat_member_can_select_chat" on public.chats for select to authen
 create policy "chat_creator_can_insert" on public.chats for insert to authenticated with check (auth.uid() = created_by);
 
 create policy "member_can_select_members" on public.chat_members for select to authenticated using (
-  exists (select 1 from public.chat_members cm where cm.chat_id = chat_members.chat_id and cm.user_id = auth.uid())
+  auth.uid() = user_id
 );
 create policy "member_self_insert" on public.chat_members for insert to authenticated with check (auth.uid() = user_id);
 create policy "member_self_update" on public.chat_members for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);

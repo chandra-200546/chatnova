@@ -370,9 +370,10 @@ export function AppProvider({ children }) {
     await loadStatuses();
   };
 
-  const createCall = async (type = 'audio') => {
+  const createCall = async (type = 'audio', chatId = null) => {
     if (!user?.id) return;
     const { error } = await supabase.from('calls').insert({
+      chat_id: chatId,
       caller_id: user.id,
       call_type: type,
       direction: 'outgoing',
