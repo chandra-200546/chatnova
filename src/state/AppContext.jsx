@@ -229,23 +229,6 @@ export function AppProvider({ children }) {
     if (error) throw error;
   };
 
-  const signUpWithPassword = async ({ email, phone, password, displayName }) => {
-    const payload = { password, options: { data: { display_name: displayName || 'New User' } } };
-    if (email) payload.email = email;
-    if (phone) payload.phone = phone;
-    const { data, error } = await supabase.auth.signUp(payload);
-    if (error) throw error;
-    return data;
-  };
-
-  const signInWithPassword = async ({ emailOrPhone, password }) => {
-    const id = (emailOrPhone || '').trim();
-    const payload = id.includes('@') ? { email: id, password } : { phone: id.startsWith('+') ? id : `+${id}`, password };
-    const { data, error } = await supabase.auth.signInWithPassword(payload);
-    if (error) throw error;
-    return data;
-  };
-
   const verifyOtp = async (phone, otp) => {
     const normalized = phone.startsWith('+') ? phone : `+${phone}`;
     const { error } = await supabase.auth.verifyOtp({ phone: normalized, token: otp, type: 'sms' });
@@ -406,8 +389,6 @@ export function AppProvider({ children }) {
     messagesByChat,
     requestOtp,
     verifyOtp,
-    signUpWithPassword,
-    signInWithPassword,
     completeProfile,
     updateProfile,
     uploadAvatar,
