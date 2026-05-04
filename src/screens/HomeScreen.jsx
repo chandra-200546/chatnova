@@ -11,9 +11,10 @@ import { useApp } from '../state/AppContext';
 
 export default function HomeScreen() {
   const nav = useNavigate();
-  const { chatList } = useApp();
+  const { chatList, createTestChat } = useApp();
   const [search, setSearch] = useState('');
   const [folder, setFolder] = useState('All');
+  const [error, setError] = useState('');
 
   const rows = useMemo(
     () => chatList.filter((x) =>
@@ -30,6 +31,20 @@ export default function HomeScreen() {
         right={<><button>Search</button><button>Camera</button><button onClick={() => nav('/settings')}>More</button></>}
       />
       <SearchBar value={search} onChange={setSearch} placeholder="Search chats" />
+      <button
+        className="ghost"
+        onClick={async () => {
+          try {
+            const chatId = await createTestChat();
+            if (chatId) nav(`/chat/${chatId}`);
+          } catch (e) {
+            setError(e.message || 'Failed to create test chat');
+          }
+        }}
+      >
+        Open Test Bot Chat
+      </button>
+      {error && <small className="danger">{error}</small>}
       <div className="chips">{CHAT_FOLDERS.map((f) => <TabButton key={f} label={f} active={folder === f} onClick={() => setFolder(f)} />)}</div>
       {rows.length === 0 ? <EmptyState title="No chats yet" description="Start a new conversation from the + button." /> : rows.map((item) => <ChatCard key={item.id} {...item} onPress={() => nav(`/chat/${item.id}`)} />)}
       <FloatingButton icon="+" onClick={() => nav('/new-chat')} />

@@ -291,6 +291,17 @@ export function AppProvider({ children }) {
 
   const sendMessage = async (chatId, text, type = 'text') => {
     if (!user?.id) return;
+    const activeChat = chatList.find((c) => c.id === chatId);
+    const isTestBotChat = activeChat?.type === 'ai' && activeChat?.name === 'ChatNova Test Bot';
+
+    if (isTestBotChat) {
+      const { error } = await supabase.rpc('send_test_message', { p_chat_id: chatId, p_content: text });
+      if (error) throw error;
+      await fetchMessages(chatId);
+      await hydrateChats(user.id);
+      return;
+    }
+
     const { error } = await supabase.from('messages').insert({
       chat_id: chatId,
       sender_id: user.id,
@@ -301,6 +312,14 @@ export function AppProvider({ children }) {
     if (error) throw error;
     await fetchMessages(chatId);
     await hydrateChats(user.id);
+  };
+
+  const createTestChat = async () => {
+    if (!user?.id) return null;
+    const { data, error } = await supabase.rpc('create_test_chat');
+    if (error) throw error;
+    await hydrateChats(user.id);
+    return data;
   };
 
   const createDirectChat = async (otherUserId) => {
@@ -395,6 +414,7 @@ export function AppProvider({ children }) {
     logout,
     fetchMessages,
     sendMessage,
+    createTestChat,
     createDirectChat,
     updateSettings,
     createGroup,
