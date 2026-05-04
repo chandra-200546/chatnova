@@ -7,7 +7,7 @@ import { useApp } from '../state/AppContext';
 export default function ChatScreen() {
   const { chatId } = useParams();
   const nav = useNavigate();
-  const { chatList, messagesByChat, sendMessage, fetchMessages, user, createCall, logAiAction } = useApp();
+  const { chatList, messagesByChat, sendMessage, fetchMessages, user, logAiAction } = useApp();
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
@@ -20,14 +20,7 @@ export default function ChatScreen() {
 
   const onStartCall = async (type) => {
     if (!chatId) return;
-    setError('');
-    setInfo('');
-    try {
-      await createCall(type, chatId);
-      setInfo(`${type === 'video' ? 'Video' : 'Audio'} call started (mock log created).`);
-    } catch (e) {
-      setError(e.message || 'Failed to start call');
-    }
+    nav(`/call/${chatId}/${type}`);
   };
 
   const onAiSummary = async () => {
