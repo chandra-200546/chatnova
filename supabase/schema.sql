@@ -219,6 +219,28 @@ alter table public.ai_logs enable row level security;
 alter table public.spam_reports enable row level security;
 alter table public.blocked_users enable row level security;
 
+drop policy if exists "profiles_select_authenticated" on public.profiles;
+drop policy if exists "profiles_update_self" on public.profiles;
+drop policy if exists "settings_self_all" on public.user_settings;
+drop policy if exists "chat_member_can_select_chat" on public.chats;
+drop policy if exists "chat_creator_can_insert" on public.chats;
+drop policy if exists "member_can_select_members" on public.chat_members;
+drop policy if exists "member_self_insert" on public.chat_members;
+drop policy if exists "member_self_update" on public.chat_members;
+drop policy if exists "member_can_read_messages" on public.messages;
+drop policy if exists "member_can_send_messages" on public.messages;
+drop policy if exists "sender_can_update_own_message" on public.messages;
+drop policy if exists "member_can_react" on public.message_reactions;
+drop policy if exists "self_task_crud" on public.message_tasks;
+drop policy if exists "self_reminder_crud" on public.message_reminders;
+drop policy if exists "member_can_read_calls" on public.calls;
+drop policy if exists "caller_can_insert_call" on public.calls;
+drop policy if exists "status_owner_crud" on public.status_updates;
+drop policy if exists "status_viewer_crud" on public.status_views;
+drop policy if exists "self_ai_logs" on public.ai_logs;
+drop policy if exists "self_spam_reports" on public.spam_reports;
+drop policy if exists "self_blocks" on public.blocked_users;
+
 create policy "profiles_select_authenticated" on public.profiles for select to authenticated using (true);
 create policy "profiles_update_self" on public.profiles for update to authenticated using (auth.uid() = id) with check (auth.uid() = id);
 

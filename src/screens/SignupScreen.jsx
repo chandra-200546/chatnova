@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../state/AppContext';
+import { toReadableError } from '../utils/errorText';
 
 export default function SignupScreen() {
   const nav = useNavigate();
@@ -27,7 +28,7 @@ export default function SignupScreen() {
       });
       setMsg('Account created. If verification is required, complete it and login.');
     } catch (e) {
-      setError(e.message || 'Signup failed');
+      setError(toReadableError(e));
     }
   };
 

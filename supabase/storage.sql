@@ -6,6 +6,13 @@ values
   ('status-media', 'status-media', true)
 on conflict (id) do nothing;
 
+drop policy if exists "avatars_read_public" on storage.objects;
+drop policy if exists "avatars_write_owner" on storage.objects;
+drop policy if exists "chat_media_member_read" on storage.objects;
+drop policy if exists "chat_media_owner_write" on storage.objects;
+drop policy if exists "status_media_public_read" on storage.objects;
+drop policy if exists "status_media_owner_write" on storage.objects;
+
 create policy "avatars_read_public" on storage.objects for select to public using (bucket_id = 'avatars');
 create policy "avatars_write_owner" on storage.objects for insert to authenticated with check (bucket_id = 'avatars' and owner = auth.uid());
 

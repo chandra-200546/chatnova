@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { validatePhone } from '../utils/validators';
 import { useApp } from '../state/AppContext';
+import { toReadableError } from '../utils/errorText';
 
 export default function LoginScreen() {
   const nav = useNavigate();
@@ -26,7 +27,7 @@ export default function LoginScreen() {
       sessionStorage.setItem('tmp_phone', normalized);
       nav('/otp');
     } catch (e) {
-      setError(e.message || 'Failed to send OTP');
+      setError(toReadableError(e));
     } finally { setLoading(false); }
   };
 
@@ -37,7 +38,7 @@ export default function LoginScreen() {
       await signInWithPassword({ emailOrPhone: identifier.trim(), password });
       nav('/');
     } catch (e) {
-      setError(e.message || 'Login failed');
+      setError(toReadableError(e));
     } finally { setLoading(false); }
   };
 
